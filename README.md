@@ -5,4 +5,14 @@ ___
 ![Структура ПО](https://github.com/PytAZU/Zrenie/blob/f7d17ccea2aada46bc9138d28e7421720fc82fac/%D0%A1%D1%82%D1%80%D1%83%D0%BA%D1%82%D1%83%D1%80%D0%B0.jpg "Структура")
 ___
 ## Установка
-Для использования ПО необходимо заранее установить программу [Tesseract](https://github.com/UB-Mannheim/tesseract/wiki)
+1. Для использования ПО необходимо заранее установить программу [Tesseract](https://github.com/UB-Mannheim/tesseract/wiki)
+
+2. В терминале перейдите в нужную (путую) директорию
+```
+cd path_to_your_directory
+```
+
+3. Скопируйте репозиторий в выбранную директорию
+```
+
+```

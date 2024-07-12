@@ -6,13 +6,13 @@ ___
 ___
 ## Установка
 1. Для использования ПО необходимо заранее установить программу [Tesseract](https://github.com/UB-Mannheim/tesseract/wiki)
-
+____
 2. В терминале перейдите в нужную (путую) директорию
 ```
 cd path_to_your_directory
 ```
-
+____
 3. Скопируйте репозиторий в выбранную директорию
 ```
-
+git clone https://github.com/PytAZU/Zrenie.git
 ```

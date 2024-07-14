@@ -33,3 +33,18 @@ cd path_to_your_directory
 ```
 git clone https://github.com/PytAZU/Zrenie.git
 ```
+___
+## Использование
+
+Windows
+
+1. Откройте исполняемый файл и раскомментируйте строку с указанием пути к Tesseract и укажите путь к нему на вашей машине
+2. Откройте командную строку
+3. Перейдите в директорию проекта
+```
+cd path_project_directory
+```
+3. Запустите основной файл
+```
+python main.py
+```

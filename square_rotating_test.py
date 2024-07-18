@@ -46,6 +46,34 @@ def order_points(pts):
     
     return rect
 
+def perspective_transform(frame, pts):
+    rect = order_points(pts)
+    (tl, tr, br, bl) = rect
+    
+    # Вычисляем ширину нового изображения
+    widthA = np.sqrt(((br[0] - bl[0]) ** 2) + ((br[1] - bl[1]) ** 2))
+    widthB = np.sqrt(((tr[0] - tl[0]) ** 2) + ((tr[1] - tl[1]) ** 2))
+    maxWidth = max(int(widthA), int(widthB))
+    
+    # Вычисляем высоту нового изображения
+    heightA = np.sqrt(((tr[0] - br[0]) ** 2) + ((tr[1] - br[1]) ** 2))
+    heightB = np.sqrt(((tl[0] - bl[0]) ** 2) + ((tl[1] - bl[1]) ** 2))
+    maxHeight = max(int(heightA), int(heightB))
+    
+    # Создаем массив точек назначения
+    dst = np.array([
+        [0, 0],
+        [maxWidth - 1, 0],
+        [maxWidth - 1, maxHeight - 1],
+        [0, maxHeight - 1]], dtype="float32")
+    
+    # Вычисляем матрицу перспективного преобразования и применяем её
+    M = cv2.getPerspectiveTransform(rect, dst)
+    warped = cv2.warpPerspective(frame, M, (maxWidth, maxHeight))
+    
+    return warped
+
+
 def four_point_transform(image, pts):
     # Получаем упорядоченный набор точек
     rect = order_points(pts)
@@ -73,6 +101,22 @@ def four_point_transform(image, pts):
     warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
     
     return warped
+
+
+
+def is_contour_white(image, contour, threshold=200):
+    # Создаем маску для контура
+    mask = np.zeros(image.shape[:2], dtype="uint8")
+    cv2.drawContours(mask, [contour], -1, 255, -1)
+    
+    # Преобразуем изображение в оттенки серого
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # Используем маску для получения пикселей внутри контура
+    masked_gray = cv2.bitwise_and(gray, gray, mask=mask)
+    
+    # Проверяем, есть ли белые пиксели в маскированной области
+    return np.any(masked_gray >= threshold)
 
 # # Загружаем изображение
 # image = cv2.imread('sq_test.png')

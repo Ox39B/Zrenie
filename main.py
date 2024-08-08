@@ -1,57 +1,28 @@
-import cv2
-import time
-import numpy as np
-from square_rotating_test import find_squares, order_points, four_point_transform
+from GPSwork import getcoords #Железо
+from CAMwork import getPhoto  #Железо
+from OSwork import writeFiltredList #Железо
+from CVwork import getSquares
+from TesWork import CV_symbol_filter
+
 
 def main():
-    # Захватываем видео с камеры
-    cap = cv2.VideoCapture(0)
-    
-    # Список для хранения последних 15 фото
-    photo_list = []
-    
-    while True:
-        # Читаем кадр с камеры
-        ret, frame = cap.read()
-        
-        if not ret:
-            break
-        
-        _, tresh = cv2.threshold(frame,127,255,cv2.THRESH_BINARY)
+    coords = [0, 0, 180] #Координаты long, latt, az
+    current_photo = 0
 
+    coords = getcoords()       #Получить координаты
+    current_photo = getPhoto() #Получить фото, минимум задержка по времени
 
-        # Добавляем новый кадр в список
-        if len(photo_list) < 15:
-            photo_list.append(frame)
-        else:
-            # Удаляем первый кадр и добавляем новый в конец списка
-            photo_list.pop(0)
-            photo_list.append(frame)
-        
-        # Проводим поиск квадратов на всех фото в списке
-        for photo in photo_list:
-            squares = find_squares(photo)
-            
-            # Проверка размеров квадратов и рисование квадратов
-            for square in squares:
-                x, y, w, h = cv2.boundingRect(square)
-                if w >= 40 and h >= 40:
-                    cv2.drawContours(photo, [square], 0, (0, 255, 0), 3)
-        
-        # Отображаем последнюю фотографию с нарисованными квадратами
-        cv2.imshow("Squares Detection", photo_list[-1])
-        cv2.imshow("tresh", tresh)
-        
-        # Ждём 1 секунду перед захватом следующего кадра
-        time.sleep(1)
-        
-        # Прерываем цикл по нажатию клавиши 'q'
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+    squares_list = [(None, None, None), (None, None, None)] #(sq1, latt, long) Сами квадраты, полученные в текущем кадре. Содержит уникальные кадры квадратов и массив из повёрнутых кадров (1квадрат на фото = 4кв в этом листе)
     
-    # Освобождаем ресурсы
-    cap.release()
-    cv2.destroyAllWindows()
+
+    squares_list = getSquares(coords, current_photo)        #Получить список квадратов и их координаты
+
+    filtred_list = [(None, None, None),(None, None, None)] #Символ и соотвествующие ему координаты
+
+    filtred_list = CV_symbol_filter(squares_list)  #Получить номер символа, удалить неопозанные квадраты
+    #Первый элемент кортежа - путь к файлу с квадратом!!!
+    
+    writeFiltredList(filtred_list)  #Ищет одни и те же координаты с схожими символами, усредняет координаты и записывает в файл
 
 if __name__ == "__main__":
-    main()
+    main() #Потом запихнуть в while true
